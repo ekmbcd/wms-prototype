@@ -1,0 +1,13 @@
+- css reset
+- add suspense
+- create loading and error component
+- create header and footer
+- create map component
+- create store
+- find good way to use xml (library to json?)
+- getCapabilities and analyze it
+- legend
+- abstract
+- visibility, transparency, layer visualization order
+- drag and drop to order layers (popup)
+- transparency popup?
