@@ -9,7 +9,9 @@ export const mapBrainStore = defineStore({
   state: () => ({
     layers: [],
     activeLayers: [],
-    layersString: ''
+    layersString: '',
+    abstract: '',
+    error: false
   }),
   getters: {
   },
@@ -25,6 +27,8 @@ export const mapBrainStore = defineStore({
         const result = parser.read(response.data)
         console.log('parse', result)
 
+        this.abstract = result.Service.Abstract
+        console.log('abstract', this.abstract)
         this.layers = []
 
         // group layers of the same type together
@@ -63,11 +67,9 @@ export const mapBrainStore = defineStore({
     },
     // returns a string of the active layers with the right scaleDenominator
     setLayersString (resolution) {
-      console.log('hello', resolution)
       const layersString = this.activeLayers.map(layerGroup => {
         let layerName = ''
         for (const layer of layerGroup.layers) {
-          console.log(layer)
           if ((!layer.maxScale || layer.maxScale >= resolution) &&
                 (!layer.minScale || layer.minScale <= resolution)) {
             layerName = layer.name

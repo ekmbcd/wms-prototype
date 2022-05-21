@@ -1,64 +1,75 @@
 <template>
-  <div id="map"></div>
+  <div class="full-height column">
+    <div class="header row">
+      <img src="logo.png" alt="logo" class="logo" />
+    </div>
+    <p class="title">{{ brainStore.abstract }}</p>
+    <h1 v-if="brainStore.error" class="fullpage-text">
+      AN ERROR HAS OCCURRED. PLEASE TRY AGAIN.
+    </h1>
+    <Transition v-else mode="out-in">
+      <Suspense>
+        <!-- component with nested async dependencies -->
+        <div class="full-height flex-one" style="padding: 8px;">
+          <Map />
+        </div>
+
+        <!-- loading state via #fallback slot -->
+        <template #fallback>
+          <h1>
+            Loading...
+          </h1>
+        </template>
+      </Suspense>
+    </Transition>
+    <div class="footer">
+      Some important legal informations
+    </div>
+  </div>
 </template>
 
 <script setup>
-import 'ol/ol.css'
-import Map from 'ol/Map'
-import OSM from 'ol/source/OSM'
-import { Tile as TileLayer } from 'ol/layer'
-import TileWMS from 'ol/source/TileWMS'
-import View from 'ol/View'
-import { onMounted } from 'vue'
-import { mapBrainStore, SERVER_URL } from './stores/mapBrain'
+import Map from './MapComponent.vue'
+import './assets/base.css'
+import { mapBrainStore } from './stores/mapBrain'
 
-const mapBrain = mapBrainStore()
-
-mapBrain.init()
-
-let currentZoom = 0
-
-onMounted(() => {
-  const layers = [
-    // world map
-    new TileLayer({
-      source: new OSM()
-    }),
-    // wsm layers
-    new TileLayer({
-      source: new TileWMS({
-        url: SERVER_URL,
-        params: { LAYERS: 'Land_Use_vector52160' }
-        // params: { LAYERS: mapBrain.layersString }
-      })
-    })
-  ]
-  const map = new Map({
-    layers,
-    target: 'map',
-    view: new View({
-      center: [0, 0],
-      zoom: 4
-    })
-  })
-
-  map.on('moveend', () => {
-    const newZoom = map.getView().getZoom()
-    // zoom event
-    if (newZoom !== currentZoom) {
-      currentZoom = newZoom
-      console.log(map.getView().getResolution())
-      mapBrain.setLayersString(map.getView().getResolution())
-    }
-  })
-})
-
+const brainStore = mapBrainStore()
 </script>
 
 <style scoped>
+.fullpage-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 2em;
+  text-align: center;
+  color: #fff;
+}
+.header {
+  padding: 12px 0px ;
+  border-bottom: 1px solid rgb(68, 68, 68);
+  gap: 16px;
+  align-items: center;
+  margin: 0 8px;
+}
+.logo {
+  height: 32px;
+  object-fit: cover; /* cover image */
+  object-position: center; /* Center the image within the element */
+}
 
-#map {
-  width: 100%;
-  height: 80vh;
+.title {
+  padding: 20px 8px 0  8px;
+}
+.footer {
+  padding: 8px 0px 20px;
+  border-top: 1px solid rgb(68, 68, 68);
+  align-items: center;
+  text-align: right;
+  color: rgb(177, 177, 177);
+  margin: 0 8px;
+  font-size: 0.7rem;
+  font-weight: 400;
 }
 </style>
