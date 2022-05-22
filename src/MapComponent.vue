@@ -12,12 +12,12 @@ import TileWMS from 'ol/source/TileWMS'
 import View from 'ol/View'
 import { onMounted, watch } from 'vue'
 import { mapBrainStore, SERVER_URL } from './stores/mapBrain'
-import { transform } from 'ol/proj.js'
+import { transform, transformExtent } from 'ol/proj.js'
 
 const mapBrain = mapBrainStore()
 
 // getCapabilities and setup layers
-mapBrain.init()
+await mapBrain.init()
 
 function createLayers () {
   const layers = [
@@ -46,17 +46,20 @@ function createLayers () {
 }
 
 const map = new Map({
+  layers: createLayers(),
   controls: defaults({ attribution: false }),
   view: new View({
     // Berlin's coordinates
     center: transform([13.40, 52.52], 'EPSG:4326', 'EPSG:3857'),
+    // limit map panning
+    extent: transformExtent(mapBrain.extent, 'EPSG:4326', 'EPSG:3857'),
     zoom: 4
   })
 })
 
 let timer
-watch(mapBrain, () => {
-  console.log('mapBrain changed')
+watch(mapBrain, (old, nw) => {
+  console.log('mapBrain changed', old, nw)
   // debounce inputs
   clearTimeout(timer)
   timer = setTimeout(() => {

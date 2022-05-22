@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import WMSCapabilities from 'ol/format/WMSCapabilities'
+import ImageWMS from 'ol/source/ImageWMS'
 import axios from 'axios'
 
 export const SERVER_URL = 'https://image.discomap.eea.europa.eu/arcgis/services/UrbanAtlas/UA_UrbanAtlas_2012/MapServer/WMSServer'
@@ -10,6 +11,8 @@ export const mapBrainStore = defineStore({
     layers: [],
     layersString: '',
     abstract: '',
+    legendURL: '',
+    extent: [],
     error: false
   }),
   getters: {
@@ -47,7 +50,7 @@ export const mapBrainStore = defineStore({
             layerInfo.active = true
           }
           // not all layers have an abstract
-          if (!layer.Abstract) {
+          if (!layerInfo.abstract) {
             layerInfo.abstract = layer.Abstract
           }
 
@@ -57,6 +60,21 @@ export const mapBrainStore = defineStore({
           }
         }
         console.log('layers', this.layers)
+
+        // extent to be used for the map
+        this.extent = result.Capability.Layer.EX_GeographicBoundingBox
+
+        // contains all layers as a comma separated string
+        const allLayers = this.layers.reduce((acc, l) => acc.concat(l.layers), []).join(',')
+
+        // get the legend image url
+        const wmsSource = new ImageWMS({
+          url: SERVER_URL,
+          params: {
+            LAYERS: allLayers
+          }
+        })
+        this.legendURL = wmsSource.getLegendUrl()
       } catch (e) {
         console.error(e)
       }

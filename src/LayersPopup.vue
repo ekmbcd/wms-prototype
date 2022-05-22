@@ -3,7 +3,10 @@
 
     <!-- POPUP -->
     <Transition name="fade">
-      <div v-if="showLayersPopup" class="layers-popup absolute-center">
+      <div v-if="showLayersPopup" class="layers-popup absolute-center relative">
+        <div class="close-button" @click="showLayersPopup = false">
+          <i class="material-icons">close</i>
+        </div>
         <h3 class="layers-text">LAYERS</h3>
         <draggable
           class="wrapper full-width"
@@ -19,7 +22,12 @@
             <div class="item">
               <div class="handle">
                 <i class="material-icons drag-icon">drag_handle</i>
-                <span>{{element.title}}</span>
+                <span>
+                  {{element.title}}
+                  <!-- <span class="tooltiptext">
+                    {{element.abstract}}
+                  </span> -->
+                </span>
               </div>
               <div class="layers-options row">
                 <div class="flex-one row align-center spacer">
@@ -61,7 +69,6 @@ const brainStore = mapBrainStore()
 const showLayersPopup = ref(false)
 const drag = ref(false)
 
-console.log(brainStore.layers)
 </script>
 
 <style scoped>
@@ -167,8 +174,4 @@ console.log(brainStore.layers)
   text-align: center;
 }
 
-.layers-text {
-  margin-top: 8px;
-  text-align: center;
-}
 </style>

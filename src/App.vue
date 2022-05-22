@@ -19,6 +19,7 @@
         <div class="full-height flex-one relative" style="padding: 8px;">
           <Map />
           <LayersPopup />
+          <LegendPopup />
         </div>
 
         <!-- loading state via #fallback slot -->
@@ -42,6 +43,7 @@ import Map from './MapComponent.vue'
 import './assets/base.css'
 import { mapBrainStore } from './stores/mapBrain'
 import LayersPopup from './LayersPopup.vue'
+import LegendPopup from './LegendPopup.vue'
 
 const brainStore = mapBrainStore()
 
