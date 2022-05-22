@@ -1,27 +1,36 @@
 <template>
   <div class="full-height column">
+
+    <!-- HEADER -->
     <div class="header row">
       <img src="logo.png" alt="logo" class="logo" />
     </div>
     <p class="title">{{ brainStore.abstract }}</p>
-    <h1 v-if="brainStore.error" class="fullpage-text">
-      AN ERROR HAS OCCURRED. PLEASE TRY AGAIN.
+
+    <!-- ERROR PAGE -->
+    <h1 v-if="brainStore.error" class="fullpage-text absolute-center">
+      AN ERROR HAS OCCURRED.<br/>PLEASE TRY AGAIN LATER.
     </h1>
-    <Transition v-else mode="out-in">
+
+    <!-- MAIN PAGE -->
+    <Transition v-else name="fade">
       <Suspense>
         <!-- component with nested async dependencies -->
-        <div class="full-height flex-one" style="padding: 8px;">
+        <div class="full-height flex-one relative" style="padding: 8px;">
           <Map />
+          <LayersPopup />
         </div>
 
         <!-- loading state via #fallback slot -->
         <template #fallback>
-          <h1>
+          <h1 class="fullpage-text absolute-center">
             Loading...
           </h1>
         </template>
       </Suspense>
     </Transition>
+
+    <!-- FOOTER -->
     <div class="footer">
       Some important legal informations
     </div>
@@ -32,16 +41,14 @@
 import Map from './MapComponent.vue'
 import './assets/base.css'
 import { mapBrainStore } from './stores/mapBrain'
+import LayersPopup from './LayersPopup.vue'
 
 const brainStore = mapBrainStore()
+
 </script>
 
 <style scoped>
 .fullpage-text {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
   font-size: 2em;
   text-align: center;
   color: #fff;
@@ -72,4 +79,5 @@ const brainStore = mapBrainStore()
   font-size: 0.7rem;
   font-weight: 400;
 }
+
 </style>

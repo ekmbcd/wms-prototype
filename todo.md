@@ -10,7 +10,7 @@
 - [x] getCapabilities and analyze it
 - [] legend
 - [x] abstract
-- [] visibility, transparency, layer visualization order
-- [] drag and drop to order layers (popup)
-- [] transparency popup?
-- [] change zoom button color
+- [x] visibility, transparency, layer visualization order
+- [x] drag and drop to order layers (popup)
+- [x] transparency popup?
+- [x] change zoom button color

@@ -10,7 +10,7 @@ import { Tile as TileLayer, Group as LayerGroup } from 'ol/layer'
 import { defaults } from 'ol/control'
 import TileWMS from 'ol/source/TileWMS'
 import View from 'ol/View'
-import { onMounted } from 'vue'
+import { onMounted, watch } from 'vue'
 import { mapBrainStore, SERVER_URL } from './stores/mapBrain'
 import { transform } from 'ol/proj.js'
 
@@ -19,40 +19,51 @@ const mapBrain = mapBrainStore()
 // getCapabilities and setup layers
 mapBrain.init()
 
-const layers = [
+function createLayers () {
+  const layers = [
   // world map
-  new TileLayer({
-    source: new OSM()
-  }),
-  // wsm layers
-  new LayerGroup({
-    layers: [
-      new TileLayer({
-        source: new TileWMS({
+    new TileLayer({
+      source: new OSM()
+    }),
+    // wsm layers
+    new LayerGroup({
+      layers: mapBrain.layers.map(layer => {
+        const source = new TileWMS({
           url: SERVER_URL,
-          params: { LAYERS: 'Land_Use_vector52160,Land_Use_Raster1402' }
-          // params: { LAYERS: mapBrain.layersString }
+          params: {
+            LAYERS: layer.layers.join(',')
+          }
         })
-      }),
-      new TileLayer({
-        source: new TileWMS({
-          url: SERVER_URL,
-          params: { LAYERS: 'City_Boundary,City__Boundary56962' }
-          // params: { LAYERS: mapBrain.layersString }
+        return new TileLayer({
+          source,
+          visible: layer.active,
+          opacity: parseInt(layer.opacity) / 100
         })
       })
-    ]
-  })
-]
+    })
+  ]
+  return layers
+}
 
 const map = new Map({
-  layers,
   controls: defaults({ attribution: false }),
   view: new View({
     // Berlin's coordinates
     center: transform([13.40, 52.52], 'EPSG:4326', 'EPSG:3857'),
     zoom: 4
   })
+})
+
+let timer
+watch(mapBrain, () => {
+  console.log('mapBrain changed')
+  // debounce inputs
+  clearTimeout(timer)
+  timer = setTimeout(() => {
+    console.log('debounced')
+    const layers = createLayers()
+    map.setLayers(layers)
+  }, 500)
 })
 
 // need page to render to get reference to html element
@@ -67,5 +78,6 @@ onMounted(() => {
 #map {
   width: 100%;
   height: 100%;
+  background-color: white;
 }
 </style>
