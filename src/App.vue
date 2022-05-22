@@ -3,7 +3,7 @@
 
     <!-- HEADER -->
     <div class="header row">
-      <img src="logo.png" alt="logo" class="logo" />
+      <img src="@/assets/logo.png" alt="logo" class="logo" />
     </div>
     <p class="title">{{ brainStore.abstract }}</p>
 

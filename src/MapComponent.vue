@@ -58,12 +58,11 @@ const map = new Map({
 })
 
 let timer
-watch(mapBrain, (old, nw) => {
-  console.log('mapBrain changed', old, nw)
+// change map layers on brainStore change
+watch(mapBrain.layers, () => {
   // debounce inputs
   clearTimeout(timer)
   timer = setTimeout(() => {
-    console.log('debounced')
     const layers = createLayers()
     map.setLayers(layers)
   }, 500)

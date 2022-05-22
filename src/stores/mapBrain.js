@@ -27,7 +27,6 @@ export const mapBrainStore = defineStore({
           { params: { request: 'getCapabilities', version: '1.3.0', service: 'WMS' } }
         )
         const result = parser.read(response.data)
-        console.log('parse', result)
 
         this.abstract = result.Service.Abstract
         this.layers = []
@@ -59,7 +58,6 @@ export const mapBrainStore = defineStore({
             this.layers.push(layerInfo)
           }
         }
-        console.log('layers', this.layers)
 
         // extent to be used for the map
         this.extent = result.Capability.Layer.EX_GeographicBoundingBox
@@ -79,21 +77,5 @@ export const mapBrainStore = defineStore({
         console.error(e)
       }
     }
-    // // returns a string of the active layers with the right scaleDenominator
-    // setLayersString (resolution) {
-    //   const layersString = this.activeLayers.map(layerGroup => {
-    //     let layerName = ''
-    //     for (const layer of layerGroup.layers) {
-    //       if ((!layer.maxScale || layer.maxScale >= resolution) &&
-    //             (!layer.minScale || layer.minScale <= resolution)) {
-    //         layerName = layer.name
-    //         break
-    //       }
-    //     }
-    //     return layerName
-    //   }).join(',')
-    //   console.log('eee', layersString)
-    //   this.layersString = layersString
-    // }
   }
 })
